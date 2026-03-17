@@ -1,3 +1,17 @@
-.venv
-__pycache__
+#ignore python cache files
+__pycache__/
+
+
+
+#ignore virtural environment 
+.venv/
+
+#ignore environment variable file
 .env
+
+#ignore system ide files 
+.DS_Store
+*.log
+.idea/
+.vscode/
+instance
