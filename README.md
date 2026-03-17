@@ -1,7 +1,3 @@
-Here’s a clean, professional README you can use for your Flask-based hotel management system:
-
----
-
 # 🏨 Hotel Management System (Flask)
 
 A web-based Hotel Management System built using Flask that supports three types of users: **Customer**, **Manager**, and **Admin**. The system streamlines hotel operations including room booking, payment processing, customer management, and feedback handling.
