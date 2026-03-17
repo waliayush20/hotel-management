@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Customer Dashboard</h2>
+
+<a href="{{ url_for('customer.rooms') }}" class="btn btn-primary">
+View Rooms
+</a>
+
+<a href="{{ url_for('customer.feedback') }}" class="btn btn-warning">
+Feedback
+</a>
+
+{% endblock %}

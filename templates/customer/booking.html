@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Book Room</h2>
+
+<form method="POST">
+
+<label>Room ID</label>
+<input type="text" name="room_id" class="form-control">
+
+<label>Days</label>
+<input type="number" name="days" class="form-control">
+
+<br>
+
+<button class="btn btn-primary">
+Confirm Booking
+</button>
+
+</form>
+
+{% endblock %}

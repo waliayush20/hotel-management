@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Complaints</h2>
+
+{% for c in complaints %}
+
+<div class="card p-2">
+
+{{ c.message }}
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

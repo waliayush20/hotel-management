@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Admin Dashboard</h2>
+
+<a href="{{ url_for('admin.analytics') }}"
+class="btn btn-primary">
+Analytics
+</a>
+
+<a href="{{ url_for('admin.payments') }}"
+class="btn btn-success">
+Payments
+</a>
+
+<a href="{{ url_for('admin.feedback') }}"
+class="btn btn-warning">
+Feedback
+</a>
+
+{% endblock %}

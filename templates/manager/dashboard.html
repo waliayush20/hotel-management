@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Manager Dashboard</h2>
+
+<a href="{{ url_for('manager.rooms') }}"
+class="btn btn-primary">
+Rooms
+</a>
+
+<a href="{{ url_for('manager.bookings') }}"
+class="btn btn-success">
+Bookings
+</a>
+
+<a href="{{ url_for('manager.complaints') }}"
+class="btn btn-danger">
+Complaints
+</a>
+
+{% endblock %}
