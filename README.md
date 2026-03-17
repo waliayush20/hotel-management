@@ -48,7 +48,6 @@ A web-based Hotel Management System built using Flask that supports three types 
 ```
 hotel-management/
 │── app.py
-│── config.py
 │── requirements.txt
 │
 ├── templates/
@@ -62,11 +61,7 @@ hotel-management/
 │   ├── js/
 │   └── images/
 │
-├── models/
-│   ├── user.py
-│   ├── room.py
-│   ├── booking.py
-│   └── feedback.py
+├── models.py
 │
 ├── routes/
 │   ├── customer_routes.py
