@@ -1,0 +1,235 @@
+/* =========================
+   ROOT VARIABLES (THEME)
+========================= */
+:root {
+    --primary: #2e7d32;        /* main green */
+    --primary-dark: #1b5e20;   /* dark green */
+    --primary-light: #a5d6a7;  /* light green */
+
+    --bg: #f4f7f5;
+    --white: #ffffff;
+    --text: #2c3e50;
+    --gray: #6c757d;
+    --border: #e0e0e0;
+
+    --radius: 10px;
+    --transition: 0.3s ease;
+}
+
+/* =========================
+   GLOBAL STYLES
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* =========================
+   NAVBAR
+========================= */
+nav, .navbar {
+    background: var(--primary-dark) !important;
+    padding: 12px 20px;
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.nav-link {
+    color: white !important;
+    margin-left: 15px;
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--primary-light) !important;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+.container {
+    padding: 20px;
+}
+
+/* =========================
+   HEADINGS
+========================= */
+h1, h2, h3 {
+    margin-bottom: 15px;
+    color: var(--primary-dark);
+}
+
+/* =========================
+   FORM STYLING
+========================= */
+form {
+    background: var(--white);
+    padding: 25px;
+    border-radius: var(--radius);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    max-width: 400px;
+    margin: auto;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-top: 15px;
+    width: 100%;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button:hover {
+    background: var(--primary-dark);
+}
+
+/* =========================
+   CARDS (DASHBOARD)
+========================= */
+.card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+/* =========================
+   TABLES
+========================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+th {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+tr:hover {
+    background: #f1f8f4;
+}
+
+/* =========================
+   STATUS BADGES
+========================= */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.badge-success {
+    background: #4caf50;
+    color: white;
+}
+
+.badge-warning {
+    background: #ff9800;
+    color: white;
+}
+
+.badge-danger {
+    background: #f44336;
+    color: white;
+}
+
+/* =========================
+   ALERTS
+========================= */
+.alert {
+    padding: 10px;
+    border-radius: var(--radius);
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* =========================
+   LINKS
+========================= */
+a {
+    text-decoration: none;
+    color: var(--primary);
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* =========================
+   DASHBOARD GRID
+========================= */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+
+    .navbar-nav {
+        text-align: center;
+    }
+}

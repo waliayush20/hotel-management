@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
@@ -28,6 +29,16 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.email} - {self.role}>"
+    
+    def makeAdmin():
+        admin = User.query.filter_by(name="Admin").first()
+        if (not admin):
+            admin = User(name="Admin", email="admin@hotel.com", password= generate_password_hash("admin123"), role="admin", phone="91-8920-370-920")
+            db.session.add(admin)
+            db.session.commit()
+            print("Creating Admin ..........")
+        else : 
+            print("Admin is present into the DB already")
 
 
 # -------------------------

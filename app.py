@@ -1,31 +1,75 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from model import db, Room, Booking, Payment, Feedback, User
+from flask import Flask, render_template, request, redirect, url_for, session
+from model import db, User, Booking, Room, Payment, Feedback, Complaint
+from werkzeug.security import check_password_hash
 
-app = Flask(__name__)  # creating flask app
-
+app = Flask(__name__)
 
 # ================= CONFIG =================
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///hotel.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///./hotel.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "123456"
 
-
 # ================= DB INIT =================
-
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    User.makeAdmin()
+
+# ================= AUTH DECORATOR =================
+def login_required(role=None):
+    def wrapper(func):
+        def inner(*args, **kwargs):
+            if "user_id" not in session:
+                return redirect(url_for("login"))
+
+            if role and session.get("user_role") != role:
+                return "❌ Unauthorized Access"
+
+            return func(*args, **kwargs)
+        inner.__name__ = func.__name__
+        return inner
+    return wrapper
 
 
-# ================= HOME =================
+# ================= ROUTES =================
 
 @app.route("/")
 def index():
-    return render_template("home.html")
+    return render_template("login.html")
 
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and check_password_hash(user.password, password):
+
+            session["user_id"] = user.id
+            session["user_role"] = user.role
+            session["user_name"] = user.name
+
+            # Redirect based on role
+            if user.role == "admin":
+                return redirect(url_for("admin_dashboard"))
+            elif user.role == "manager":
+                return redirect(url_for("manager_dashboard"))
+            else:
+                return redirect(url_for("customer_dashboard"))
+
+        return "❌ Invalid Credentials"
+
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 # =====================================================
 # ================= CUSTOMER ROUTES ===================
