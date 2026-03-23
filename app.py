@@ -80,14 +80,24 @@ def logout():
 @login_required(role="customer")
 def customer_dashboard():
     user = User.query.get(session["user_id"])
-    return render_template("customer/dashboard.html", bookings=user.bookings)
+    rooms = Room.query.all()
+    bookings = Booking.query.filter_by(user_id=user.id).all()
+    complaints = Complaint.query.filter_by(user_id=user.id).all()
+    feedbacks = Feedback.query.filter_by(user_id=user.id).all()
+
+    return render_template(
+        "customer/dashboard.html",
+        rooms=rooms,
+        bookings=bookings,
+        complaints=complaints,
+        feedbacks=feedbacks
+    )
 
 
 @app.route("/customer/rooms")
 @login_required(role="customer")
 def customer_rooms():
-    rooms = Room.query.all()
-    return render_template("customer/rooms.html", rooms=rooms)
+    return redirect(url_for("customer_dashboard"))
 
 
 @app.route("/customer/room/<int:id>")
@@ -97,68 +107,68 @@ def customer_room_detail(id):
     return render_template("customer/room_detail.html", room=room)
 
 
-@app.route("/customer/book/<int:id>", methods=["GET", "POST"])
+@app.route("/customer/book/<int:id>", methods=["POST"])
 @login_required(role="customer")
 def customer_book(id):
 
     room = Room.query.get_or_404(id)
 
-    if request.method == "POST":
+    days = int(request.form.get("days", 1))
+    check_in_date = date.today()
+    check_out_date = check_in_date + timedelta(days=days)
+    total_amount = room.price * days
 
-        days = int(request.form.get("days", 1))
-        check_in_date = date.today()
-        check_out_date = check_in_date + timedelta(days=days)
-        total_amount = room.price * days
+    booking = Booking(
+        user_id=session["user_id"],
+        room_id=id,
+        check_in_date=check_in_date,
+        check_out_date=check_out_date,
+        days=days,
+        status="pending",
+        total_amount=total_amount,
+        amount_paid=0
+    )
 
-        booking = Booking(
-            user_id=session["user_id"],
-            room_id=id,
-            check_in_date=check_in_date,
-            check_out_date=check_out_date,
-            status="pending",
-            total_amount=total_amount,
-            amount_paid=0
-        )
+    room.status = "booked"
 
-        room.status = "booked"
+    db.session.add(booking)
+    db.session.commit()
 
-        db.session.add(booking)
-        db.session.commit()
-
-        return redirect(url_for("customer_payment", booking_id=booking.id))
-
-    return render_template("customer/booking.html", room=room)
+    return redirect(url_for("customer_dashboard"))
 
 
-@app.route("/customer/payment/<int:booking_id>", methods=["GET", "POST"])
+@app.route("/customer/payment/<int:booking_id>", methods=["POST"])
 @login_required(role="customer")
 def customer_payment(booking_id):
 
     booking = Booking.query.get_or_404(booking_id)
 
-    if request.method == "POST":
+    if booking.user_id != session["user_id"]:
+        return "Unauthorized"
 
-        amount = float(request.form["amount"])
-        mode = request.form["mode"]
+    amount = float(request.form.get("amount", booking.total_amount - (booking.amount_paid or 0)))
+    mode = request.form.get("mode", "UPI")
 
-        pay = Payment(
-            booking_id=booking_id,
-            amount=amount,
-            payment_method=mode,
-            status="verified"  # mark as immediately verified for customer complete flow
-        )
+    due = booking.total_amount - (booking.amount_paid or 0)
+    if amount <= 0 or amount > due:
+        return "Invalid payment amount"
 
-        # Update booking payment summary
-        booking.amount_paid = booking.amount_paid + amount if booking.amount_paid else amount
-        if booking.amount_paid >= booking.total_amount:
-            booking.status = "confirmed"
+    pay = Payment(
+        booking_id=booking_id,
+        amount=amount,
+        payment_method=mode,
+        status="verified",
+        paid_at=datetime.utcnow()
+    )
 
-        db.session.add(pay)
-        db.session.commit()
+    booking.amount_paid = (booking.amount_paid or 0) + amount
+    if booking.amount_paid >= booking.total_amount:
+        booking.status = "confirmed"
 
-        return redirect(url_for("customer_dashboard"))
+    db.session.add(pay)
+    db.session.commit()
 
-    return render_template("customer/payment.html", booking=booking)
+    return redirect(url_for("customer_dashboard"))
 
 
 @app.route("/customer/checkin/<int:booking_id>", methods=["POST"])
@@ -170,65 +180,56 @@ def customer_checkin(booking_id):
     if booking.user_id != session["user_id"]:
         return "Unauthorized"
 
-    if booking.payment and booking.payment.status == "verified":
-        booking.status = "checked_in"
-        booking.room.status = "occupied"
-        db.session.commit()
+    if (booking.amount_paid or 0) < booking.total_amount:
+        return "Payment must be completed before check-in"
+
+    if booking.status != "confirmed":
+        return "Booking must be confirmed before check-in"
+
+    booking.status = "checked_in"
+    booking.room.status = "occupied"
+    db.session.commit()
 
     return redirect(url_for("customer_dashboard"))
 
 
-@app.route("/customer/feedback", methods=["GET", "POST"])
+@app.route("/customer/feedback", methods=["POST"])
 @login_required(role="customer")
 def customer_feedback():
 
-    if request.method == "POST":
-        comment = request.form.get("comment")
-        rating = int(request.form.get("rating", 0))
+    comment = request.form.get("comment")
+    rating = int(request.form.get("rating", 0))
 
-        feedback = Feedback(
-            user_id=session["user_id"],
-            comment=comment,
-            rating=rating
-        )
+    feedback = Feedback(
+        user_id=session["user_id"],
+        comment=comment,
+        rating=rating
+    )
 
-        db.session.add(feedback)
-        db.session.commit()
+    db.session.add(feedback)
+    db.session.commit()
 
-        return redirect(url_for("customer_dashboard"))
-
-    return render_template("customer/feedback.html")
+    return redirect(url_for("customer_dashboard"))
 
 
-@app.route("/customer/complaint", methods=["GET", "POST"])
+@app.route("/customer/complaint", methods=["POST"])
 @login_required(role="customer")
 def customer_complaint():
 
-    if request.method == "POST":
-        subject = request.form.get("subject")
-        description = request.form.get("description")
+    subject = request.form.get("subject")
+    description = request.form.get("description")
 
-        complaint = Complaint(
-            user_id=session["user_id"],
-            subject=subject,
-            description=description,
-            status="open"
-        )
+    complaint = Complaint(
+        user_id=session["user_id"],
+        subject=subject,
+        description=description,
+        status="open"
+    )
 
-        db.session.add(complaint)
-        db.session.commit()
+    db.session.add(complaint)
+    db.session.commit()
 
-        return redirect(url_for("customer_dashboard"))
-
-    return render_template("customer/complaint.html")
-
-
-@app.route("/customer/complaints")
-@login_required(role="customer")
-def customer_complaints():
-    complaints = Complaint.query.filter_by(user_id=session["user_id"]).all()
-    return render_template("customer/complaints.html", complaints=complaints)
-
+    return redirect(url_for("customer_dashboard"))
 
 # =====================================================
 # ================= MANAGER ROUTES ====================
@@ -237,43 +238,34 @@ def customer_complaints():
 @app.route("/manager")
 @login_required(role="manager")
 def manager_dashboard():
-    return render_template("manager/dashboard.html")
+    rooms = Room.query.all()
+    bookings = Booking.query.all()
+    complaints = Complaint.query.all()
+
+    return render_template(
+        "manager/dashboard.html",
+        rooms=rooms,
+        bookings=bookings,
+        complaints=complaints
+    )
 
 
 @app.route("/manager/rooms")
 @login_required(role="manager")
 def manager_rooms():
-
-    rooms = Room.query.all()
-
-    return render_template(
-        "manager/rooms.html",
-        rooms=rooms
-    )
+    return redirect(url_for("manager_dashboard"))
 
 
 @app.route("/manager/bookings")
 @login_required(role="manager")
 def manager_bookings():
-
-    bookings = Booking.query.all()
-
-    return render_template(
-        "manager/bookings.html",
-        bookings=bookings
-    )
+    return redirect(url_for("manager_dashboard"))
 
 
 @app.route("/manager/complaints")
 @login_required(role="manager")
 def manager_complaints():
-
-    complaints = Complaint.query.all()
-
-    return render_template(
-        "manager/complaints.html",
-        complaints=complaints
-    )
+    return redirect(url_for("manager_dashboard"))
 
 
 @app.route("/manager/complaint/respond/<int:id>", methods=["POST"])
@@ -307,6 +299,24 @@ def manager_verify_payment(id):
     return redirect(url_for("manager_bookings"))
 
 
+@app.route("/manager/checkout/<int:booking_id>", methods=["POST"])
+@login_required(role="manager")
+def manager_checkout(booking_id):
+
+    booking = Booking.query.get_or_404(booking_id)
+
+    if booking.status not in ["checked_in", "confirmed"]:
+        return "Cannot check out unless checked in or confirmed"
+
+    booking.status = "completed"
+    if booking.room:
+        booking.room.status = "available"
+
+    db.session.commit()
+
+    return redirect(url_for("manager_dashboard"))
+
+
 # =====================================================
 # ================= ADMIN ROUTES ======================
 # =====================================================
@@ -322,6 +332,8 @@ def admin_dashboard():
         total_bookings=Booking.query.count(),
         total_payments=Payment.query.count(),
 
+        payments=Payment.query.all(),
+        feedback=Feedback.query.all(),
         users=User.query.all(),
         rooms=Room.query.all(),
         bookings=Booking.query.all()
@@ -331,65 +343,40 @@ def admin_dashboard():
 @app.route("/admin/analytics")
 @login_required(role="admin")
 def admin_analytics():
-
-    total_rooms = Room.query.count()
-    total_bookings = Booking.query.count()
-    total_users = User.query.count()
-
-    return render_template(
-        "admin/analytics.html",
-        total_rooms=total_rooms,
-        total_bookings=total_bookings,
-        total_users=total_users
-    )
-
-
-@app.route("/admin/add-manager", methods=["GET", "POST"])
-@login_required(role="admin")
-def add_manager():
-
-    if request.method == "POST":
-
-        name = request.form["name"]
-        email = request.form["email"]
-        password = generate_password_hash(request.form["password"])
-
-        manager = User(
-            name=name,
-            email=email,
-            password=password,
-            role="manager"
-        )
-
-        db.session.add(manager)
-        db.session.commit()
-
-        return redirect(url_for("admin_dashboard"))
-
-    return render_template("admin/add_manager.html")
+    return redirect(url_for("admin_dashboard"))
 
 
 @app.route("/admin/feedback")
 @login_required(role="admin")
 def admin_feedback():
+    return redirect(url_for("admin_dashboard"))
 
-    feedback = Feedback.query.all()
-
-    return render_template(
-        "admin/feedback.html",
-        feedback=feedback
-    )
 
 @app.route("/admin/payments")
 @login_required(role="admin")
 def admin_payments():
+    return redirect(url_for("admin_dashboard"))
 
-    payments = Payment.query.all()
 
-    return render_template(
-        "admin/payments.html",
-        payments=payments
+@app.route("/admin/add-manager", methods=["POST"])
+@login_required(role="admin")
+def add_manager():
+
+    name = request.form["name"]
+    email = request.form["email"]
+    password = generate_password_hash(request.form["password"])
+
+    manager = User(
+        name=name,
+        email=email,
+        password=password,
+        role="manager"
     )
+
+    db.session.add(manager)
+    db.session.commit()
+
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():

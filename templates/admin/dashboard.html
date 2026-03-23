@@ -4,19 +4,66 @@
 
 <h2>Admin Dashboard</h2>
 
-<a href="{{ url_for('admin_analytics') }}"
-class="btn btn-primary">
-Analytics
-</a>
+<div class="row">
+    <div class="col-md-4 p-3">
+        <div class="card p-2">
+            <h5>Total Rooms</h5><p>{{ total_rooms }}</p>
+        </div>
+    </div>
+    <div class="col-md-4 p-3">
+        <div class="card p-2">
+            <h5>Total Bookings</h5><p>{{ total_bookings }}</p>
+        </div>
+    </div>
+    <div class="col-md-4 p-3">
+        <div class="card p-2">
+            <h5>Total Users</h5><p>{{ total_users }}</p>
+        </div>
+    </div>
+</div>
 
-<a href="{{ url_for('admin_payments') }}"
-class="btn btn-success">
-Payments
-</a>
+<div class="row">
+    <div class="col-md-6 p-3">
+        <h4>Payments</h4>
+        <table class="table table-sm">
+            <tr><th>ID</th><th>Booking</th><th>Amt</th><th>Status</th></tr>
+            {% for p in payments %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.booking_id }}</td>
+                <td>{{ p.amount }}</td>
+                <td>{{ p.status }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
-<a href="{{ url_for('admin_feedback') }}"
-class="btn btn-warning">
-Feedback
-</a>
+    <div class="col-md-6 p-3">
+        <h4>Feedback</h4>
+        <table class="table table-sm">
+            <tr><th>ID</th><th>User</th><th>Rating</th><th>Comment</th></tr>
+            {% for f in feedback %}
+            <tr>
+                <td>{{ f.id }}</td>
+                <td>{{ f.customer.name }}</td>
+                <td>{{ f.rating }}</td>
+                <td>{{ f.comment }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 p-3">
+        <h4>Add Manager</h4>
+        <form method="POST" action="{{ url_for('add_manager') }}">
+            <input type="text" name="name" placeholder="Manager Name" class="form-control mb-2" required>
+            <input type="email" name="email" placeholder="Manager Email" class="form-control mb-2" required>
+            <input type="password" name="password" placeholder="Password" class="form-control mb-2" required>
+            <button class="btn btn-primary" type="submit">Add Manager</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

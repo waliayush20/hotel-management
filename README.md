@@ -4,6 +4,8 @@ A web-based Hotel Management System built using Flask that supports three types 
 
 ---
 
+<img src="./static/hotel_login.jpeg">
+
 ## 📌 Features
 
 ### 👤 Customer
