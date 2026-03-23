@@ -4,14 +4,34 @@
 
 <h2>Complaints</h2>
 
+<table class="table">
+<tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Subject</th>
+    <th>Description</th>
+    <th>Status</th>
+    <th>Response</th>
+    <th>Action</th>
+</tr>
 {% for c in complaints %}
-
-<div class="card p-2">
-
-{{ c.message }}
-
-</div>
-
+<tr>
+    <td>{{ c.id }}</td>
+    <td>{{ c.customer.name }}</td>
+    <td>{{ c.subject }}</td>
+    <td>{{ c.description }}</td>
+    <td>{{ c.status }}</td>
+    <td>{{ c.response or 'N/A' }}</td>
+    <td>
+        {% if c.status != 'resolved' %}
+        <form method="POST" action="{{ url_for('manager_respond_complaint', id=c.id) }}">
+            <input type="text" name="response" class="form-control" placeholder="Response" required>
+            <button class="btn btn-success btn-sm mt-1">Resolve</button>
+        </form>
+        {% endif %}
+    </td>
+</tr>
 {% endfor %}
+</table>
 
 {% endblock %}

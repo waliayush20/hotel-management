@@ -2,17 +2,30 @@
 
 {% block content %}
 
-<h2>Payments</h2>
+<h2>Payment Records</h2>
 
-{% for p in payments %}
+<table class="table">
 
-<p>
+<tr>
+    <th>ID</th>
+    <th>Amount</th>
+    <th>Method</th>
+    <th>Status</th>
+    <th>Transaction ID</th>
+</tr>
 
-User {{ p.user_id }}
-Amount {{ p.amount }}
+{% for payment in payments %}
 
-</p>
+<tr>
+<td>{{ payment.id }}</td>
+<td>{{ payment.amount }}</td>
+<td>{{ payment.payment_method }}</td>
+<td>{{ payment.status }}</td>
+<td>{{ payment.transaction_id }}</td>
+</tr>
 
 {% endfor %}
+
+</table>
 
 {% endblock %}

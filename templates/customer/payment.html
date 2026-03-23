@@ -2,12 +2,16 @@
 
 {% block content %}
 
-<h2>Payment</h2>
+<h2>Payment for Booking #{{ booking.id }}</h2>
+
+<p>Room: {{ booking.room.room_number }} ({{ booking.room.room_type }})</p>
+<p>Days: {{ booking.days }}</p>
+<p>Total Amount: {{ booking.total_amount }}</p>
 
 <form method="POST">
 
 <label>Amount</label>
-<input type="text" name="amount" class="form-control">
+<input type="text" name="amount" class="form-control" value="{{ booking.total_amount }}">
 
 <label>Payment Mode</label>
 

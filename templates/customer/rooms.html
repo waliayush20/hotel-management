@@ -19,15 +19,13 @@
 <tr>
 
 <td>{{ room.id }}</td>
-<td>{{ room.type }}</td>
+<td>{{ room.room_type }}</td>
 <td>{{ room.price }}</td>
 <td>{{ room.status }}</td>
 
 <td>
-<a href="{{ url_for('customer.book', id=room.id) }}"
-   class="btn btn-success">
-Book
-</a>
+<a href="{{ url_for('customer_room_detail', id=room.id) }}" class="btn btn-info">Details</a>
+<a href="{{ url_for('customer_book', id=room.id) }}" class="btn btn-success">Book</a>
 </td>
 
 </tr>

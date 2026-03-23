@@ -31,7 +31,7 @@ class User(db.Model):
         return f"<User {self.email} - {self.role}>"
     
     def makeAdmin():
-        admin = User.query.filter_by(name="Admin").first()
+        admin = User.query.filter_by(email="admin@hotel.com").first()
         if (not admin):
             admin = User(name="Admin", email="admin@hotel.com", password= generate_password_hash("admin123"), role="admin", phone="91-8920-370-920")
             db.session.add(admin)
@@ -77,6 +77,7 @@ class Booking(db.Model):
 
     check_in_date = db.Column(db.Date, nullable=False)
     check_out_date = db.Column(db.Date, nullable=False)
+    days = db.Column(db.Integer, nullable=False, default=1)
 
     status = db.Column(db.String(20), default='pending')
     # pending / partially_booked / confirmed / checked_in / completed / cancelled

@@ -4,14 +4,23 @@
 
 <h2>Feedback</h2>
 
+<table class="table">
+<tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Rating</th>
+    <th>Comment</th>
+    <th>Admin Reply</th>
+</tr>
 {% for f in feedback %}
-
-<div class="card p-2">
-
-{{ f.message }}
-
-</div>
-
+<tr>
+    <td>{{ f.id }}</td>
+    <td>{{ f.customer.name }}</td>
+    <td>{{ f.rating or 'N/A' }}</td>
+    <td>{{ f.comment }}</td>
+    <td>{{ f.admin_reply or 'N/A' }}</td>
+</tr>
 {% endfor %}
+</table>
 
 {% endblock %}

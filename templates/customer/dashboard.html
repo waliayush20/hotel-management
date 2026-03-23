@@ -4,12 +4,52 @@
 
 <h2>Customer Dashboard</h2>
 
-<a href="{{ url_for('customer.rooms') }}" class="btn btn-primary">
+<a href="{{ url_for('customer_rooms') }}" class="btn btn-primary">
 View Rooms
 </a>
 
-<a href="{{ url_for('customer.feedback') }}" class="btn btn-warning">
+<a href="{{ url_for('customer_feedback') }}" class="btn btn-warning">
 Feedback
 </a>
+
+<a href="{{ url_for('customer_complaint') }}" class="btn btn-danger">
+Complaint
+</a>
+
+<a href="{{ url_for('customer_complaints') }}" class="btn btn-info">
+My Complaints
+</a>
+
+<h3>My Bookings</h3>
+
+<table class="table">
+
+<tr>
+    <th>ID</th>
+    <th>Room</th>
+    <th>Status</th>
+    <th>Payment</th>
+    <th>Action</th>
+</tr>
+
+{% for booking in bookings %}
+
+<tr>
+<td>{{ booking.id }}</td>
+<td>{{ booking.room.room_number }}</td>
+<td>{{ booking.status }}</td>
+<td>{{ booking.payment.status if booking.payment else 'Pending' }}</td>
+<td>
+{% if booking.payment and booking.payment.status == 'verified' and booking.status == 'confirmed' %}
+<form method="POST" action="{{ url_for('customer_checkin', booking_id=booking.id) }}" style="display:inline;">
+<button class="btn btn-success">Check In</button>
+</form>
+{% endif %}
+</td>
+</tr>
+
+{% endfor %}
+
+</table>
 
 {% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Add Manager</h3>
+
+<form method="POST">
+
+    <input name="name" placeholder="Name" class="form-control mb-2">
+    <input name="email" placeholder="Email" class="form-control mb-2">
+    <input name="password" type="password" placeholder="Password" class="form-control mb-2">
+
+    <button class="btn btn-success">Add</button>
+
+</form>
+
+{% endblock %}

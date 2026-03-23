@@ -2,17 +2,38 @@
 
 {% block content %}
 
-<h2>Bookings</h2>
+<h2>All Bookings</h2>
 
-{% for b in bookings %}
+<table class="table">
 
-<p>
+<tr>
+    <th>ID</th>
+    <th>Customer</th>
+    <th>Room</th>
+    <th>Status</th>
+    <th>Payment Status</th>
+    <th>Action</th>
+</tr>
 
-Room {{ b.room_id }}
-Customer {{ b.user_id }}
+{% for booking in bookings %}
 
-</p>
+<tr>
+<td>{{ booking.id }}</td>
+<td>{{ booking.customer.name }}</td>
+<td>{{ booking.room.room_number }}</td>
+<td>{{ booking.status }}</td>
+<td>{{ booking.payment.status if booking.payment else 'No Payment' }}</td>
+<td>
+{% if booking.payment and booking.payment.status == 'pending' %}
+<form method="POST" action="{{ url_for('manager_verify_payment', id=booking.payment.id) }}" style="display:inline;">
+<button class="btn btn-success">Verify Payment</button>
+</form>
+{% endif %}
+</td>
+</tr>
 
 {% endfor %}
+
+</table>
 
 {% endblock %}
