@@ -27,8 +27,20 @@
 
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
+    background: linear-gradient(120deg, #ecf8f3 0%, #f1f4f3 35%, #f4f7f5 100%);
     color: var(--text);
+    min-height: 100vh;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+}
+
+h2 {
+    text-align: center;
+    font-weight: 700;
 }
 
 /* =========================
@@ -119,17 +131,20 @@ button:hover {
    CARDS (DASHBOARD)
 ========================= */
 .card {
-    background: var(--white);
+    background: linear-gradient(180deg, var(--white) 5%, #f5fff5 100%);
     border-radius: var(--radius);
     padding: 20px;
-    box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     margin-bottom: 20px;
     transition: var(--transition);
 }
 
 .card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
 }
+
 
 /* =========================
    TABLES
@@ -140,22 +155,35 @@ table {
     background: var(--white);
     border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
 th {
-    background: var(--primary);
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
     color: white;
     padding: 12px;
+    text-align: center;
 }
 
 td {
     padding: 12px;
     border-bottom: 1px solid var(--border);
+    text-align: center;
 }
 
 tr:hover {
     background: #f1f8f4;
 }
+
+.btn {
+    display: inline-block;
+    min-width: 80px;
+}
+
+button {
+    width: auto;
+}
+
 
 /* =========================
    STATUS BADGES
@@ -224,9 +252,28 @@ a:hover {
 /* =========================
    RESPONSIVE
 ========================= */
+.auth-wrapper {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-card {
+    width: 350px;
+    max-width: 90%;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
 @media (max-width: 768px) {
+    .auth-wrapper {
+        min-height: 70vh;
+        padding: 10px;
+    }
+
     form {
-        width: 90%;
+        width: 100%;
     }
 
     .navbar-nav {

@@ -4,6 +4,8 @@ A web-based Hotel Management System built using Flask that supports three types 
 
 ---
 
+<img src="./static/hotel_login.jpeg">
+
 ## 📌 Features
 
 ### 👤 Customer
@@ -49,27 +51,16 @@ A web-based Hotel Management System built using Flask that supports three types 
 hotel-management/
 │── app.py
 │── requirements.txt
-│
+│── model.py
 ├── templates/
 │   ├── customer/
 │   ├── manager/
 │   ├── admin/
 │   └── base.html
-│
 ├── static/
 │   ├── css/
-│   ├── js/
-│   └── images/
-│
-├── models.py
-│
-├── routes/
-│   ├── customer_routes.py
-│   ├── manager_routes.py
-│   └── admin_routes.py
-│
-└── database/
-    └── db.sqlite3
+│   └── style.css
+└── hotel.db
 ```
 
 ---
@@ -99,7 +90,7 @@ pip install -r requirements.txt
 4. Run the application:
 
 ```bash
-flask run
+python app.py
 ```
 
 5. Open in browser:

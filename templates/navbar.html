@@ -1,0 +1,58 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container-fluid">
+
+        <!-- Brand -->
+        <a class="navbar-brand" href="/">Hotel System</a>
+
+        <!-- Toggle (Mobile) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nav Items -->
+        <div class="collapse navbar-collapse" id="nav">
+
+            <ul class="navbar-nav me-auto">
+
+                {% if session.get("user_role") == "admin" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                    </li>
+
+                {% elif session.get("user_role") == "manager" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('manager_dashboard') }}">Dashboard</a>
+                    </li>
+
+                {% elif session.get("user_role") == "customer" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('customer_dashboard') }}">Dashboard</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+
+            <!-- Right Side -->
+            <ul class="navbar-nav ms-auto">
+
+                {% if session.get("user_id") %}
+                    <li class="nav-item">
+                        <span class="nav-link text-white">
+                            👋 {{ session.get("user_name") }}
+                        </span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+
+        </div>
+    </div>
+</nav>
